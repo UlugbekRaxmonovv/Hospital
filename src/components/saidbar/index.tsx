@@ -16,7 +16,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { MdOutlineDashboard,MdOutlineHome } from "react-icons/md";
+import {MdOutlineHome } from "react-icons/md";
 import { FaHospitalSymbol } from "react-icons/fa";
 
 import { useNavigate } from 'react-router-dom';
