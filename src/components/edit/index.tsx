@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import axios from "axios";
 
 interface DataType {
@@ -17,6 +17,7 @@ interface EditProps {
 }
 
 const Edit: React.FC<EditProps> = ({ isModalOpen, setIsModalOpen, setRelout }) => {
+    const [loading,setLoading] = useState<boolean>(false);
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setIsModalOpen((prev) =>
@@ -31,6 +32,7 @@ const Edit: React.FC<EditProps> = ({ isModalOpen, setIsModalOpen, setRelout }) =
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     axios
       .put(`https://667fec3456c2c76b495a8d83.mockapi.io/cards/${isModalOpen.id}`, isModalOpen)
       .then((response) => {
@@ -39,7 +41,8 @@ const Edit: React.FC<EditProps> = ({ isModalOpen, setIsModalOpen, setRelout }) =
       })
       .catch((error) => {
         console.error("Error updating data:", error);
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -65,12 +68,18 @@ const Edit: React.FC<EditProps> = ({ isModalOpen, setIsModalOpen, setRelout }) =
               name="price"
               value={isModalOpen.price}
               onChange={handleInputChange}
-              type="number"  // `number` turidagi input
+              type="number"  
               className="border w-full h-[40px] rounded px-[10px] mb-4 outline-none"
             /> <br />
-            <button type="submit" className="bg-blue-500 text-white w-full h-[40px] rounded ">
-              Save
+           <div className="flex gap-2 w-full">
+           <button type="submit" className="bg-blue-500 text-white w-[50%] h-[40px] rounded " onClick={() => setIsModalOpen(null)}>
+            Cancel
             </button>
+           <button type="submit" className="bg-blue-500 text-white w-[50%] h-[40px] rounded" disabled={loading}>
+           {loading ? "Loading..." : "Save"}
+            </button>
+           
+           </div>
           </form>
         </div>
       </div>

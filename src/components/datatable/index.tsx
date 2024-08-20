@@ -31,10 +31,29 @@ const DenseTable: React.FC<DenseTableProps> = ({ relout, setRelout }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [img, setImg] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<DataType | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   const handleEditSubmit = (row: DataType) => {
     setIsModalOpen(row);
   };
+
+  const handleDelete =() => {
+     axios
+     .delete(`https://667fec3456c2c76b495a8d83.mockapi.io/cards/${itemToDelete}`)
+     .then(()=>{
+      setData(data.filter(item => item.id !== itemToDelete));
+      setRelout(prev => !prev);
+     })
+     .catch((error)=>{
+      console.error("Error deleting data:", error);
+     })
+     .finally(()=>{
+      setDeleteModalOpen(false);
+      setItemToDelete(null);
+     })
+    }
+
 
   useEffect(() => {
     setLoading(true);
@@ -42,15 +61,17 @@ const DenseTable: React.FC<DenseTableProps> = ({ relout, setRelout }) => {
       .get(import.meta.env.VITE_BASE_URL + "/cards")
       .then((response) => {
         setData(response.data);
-        
       })
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
   }, [relout]);
 
-  setTimeout(() =>{
-    setImg(false);
-},700)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setImg(false);
+    }, 700);
+    return () => clearTimeout(timer);
+  }, [relout]);
 
   return (
     <div className="w-full">
@@ -67,26 +88,24 @@ const DenseTable: React.FC<DenseTableProps> = ({ relout, setRelout }) => {
               <TableCell align="left">Active</TableCell>
             </TableRow>
           </TableHead>
-          {
-        loading ?   <Box
-sx={{
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  position: "absolute",
-  width: "100%",
-  height: "100vh",
-  top: "0",
-  left: "0",
-  backgroundColor: "rgba(0, 0, 0, 0.2)",
-  zIndex: 9999,
-}}
->
-<CircularProgress color="inherit" />
-                        </Box>
-                        : 
-                          <></>
-                         } 
+          {loading && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                position: "absolute",
+                width: "100%",
+                height: "100vh",
+                top: "0",
+                left: "0",
+                backgroundColor: "rgba(0, 0, 0, 0.2)",
+                zIndex: 9999,
+              }}
+            >
+              <CircularProgress color="inherit" />
+            </Box>
+          )}
           <TableBody>
             {data.map((row, inx) => (
               <TableRow
@@ -123,7 +142,13 @@ sx={{
                     >
                       Edit
                     </button>
-                    <button className="bg-red-600 text-white px-2 py-1 rounded">
+                    <button
+                      className="bg-red-600 text-white px-2 py-1 rounded"
+                      onClick={() => {
+                        setItemToDelete(row.id);
+                        setDeleteModalOpen(true);
+                      }}
+                    >
                       Delete
                     </button>
                   </div>
@@ -134,28 +159,32 @@ sx={{
         </Table>
       </TableContainer>
 
-      {isModalOpen  ? 
-      
       <Modal
-      title="Edit Card"
-      centered
-      open={true}
-      onOk={() => setIsModalOpen(null)}
-      onCancel={() => setIsModalOpen(null)}
-      footer={false}
-      width={300}
-    >
-      <Edit
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        setRelout={setRelout}
-        
-      />
-    </Modal>
-    
-  :
-  <></>
-  }
+        title="Delete Confirmation"
+        open={deleteModalOpen}
+        onOk={handleDelete}
+        onCancel={() => setDeleteModalOpen(false)}
+      >
+        <p>Are you sure you want to delete this item?</p>
+      </Modal>
+
+      {isModalOpen && (
+        <Modal
+          title="Edit Card"
+          centered
+          open={true}
+          onOk={() => setIsModalOpen(null)}
+          onCancel={() => setIsModalOpen(null)}
+          footer={false}
+          width={300}
+        >
+          <Edit
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            setRelout={setRelout}
+          />
+        </Modal>
+      )}
     </div>
   );
 };
