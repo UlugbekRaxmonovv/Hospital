@@ -2,7 +2,12 @@ import { Box } from "@mui/material";
 import MiniDrawer from "../../components/saidbar";
 import { Outlet } from "react-router-dom";
 import DataTable from "../../components/datatable";
-const Dashboard: React.FC=() => {
+
+interface DashboardProps {
+    relout: boolean;
+    setRelout: React.Dispatch<React.SetStateAction<boolean>>;
+  }
+const Dashboard: React.FC<DashboardProps> = ({ relout, setRelout }) => {
 
     return (
        <>
@@ -11,7 +16,7 @@ const Dashboard: React.FC=() => {
         <MiniDrawer/>
         <Outlet />
              <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <DataTable/>
+                <DataTable  relout={relout} setRelout={setRelout} />
             </Box>
       
       </Box>
