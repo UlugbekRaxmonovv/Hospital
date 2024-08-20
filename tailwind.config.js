@@ -5,7 +5,13 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+
+      backdropBlur: {
+        'xs': '2px',
+        '3xl': '40px',
+      },
+    },
   },
   plugins: [],
 }

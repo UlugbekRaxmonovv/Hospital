@@ -18,7 +18,11 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import {MdOutlineHome } from "react-icons/md";
 import { FaHospitalSymbol } from "react-icons/fa";
-
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Tooltip from '@mui/material/Tooltip';
+import Logout from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
@@ -94,11 +98,20 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function MiniDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const opens = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+    localStorage.removeItem('x-auth-token');
+    navigate('/');
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -108,7 +121,7 @@ export default function MiniDrawer() {
   <div className="">
       <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} sx={{bgcolor: '#334155'}}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -122,9 +135,88 @@ export default function MiniDrawer() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
+<div className="box">
+<div className="">
+<Typography variant="h6" noWrap component="div" color="inherit">
+           Hospital
           </Typography>
+</div>
+
+<div className="box1">
+<div className="">
+<Tooltip title="Account settings" >
+          <IconButton
+            onClick={handleClick}
+            size="small"
+            sx={{ ml: 2,display: 'flex', justifyContent:'end' }}
+            aria-controls={opens ? 'account-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={opens ? 'true' : undefined}
+          >
+            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+          </IconButton>
+        </Tooltip>
+        <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={opens}
+        onClose={handleClose}
+        onClick={handleClose}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            mt: 1.5,
+            '& .MuiAvatar-root': {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            '&::before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: 'background.paper',
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={handleClose}>
+          <Avatar /> Profile
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <Avatar /> My account
+        </MenuItem>
+        <Divider />
+       
+        {/* <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <Settings fontSize="small" />
+          </ListItemIcon>
+          Settings
+        </MenuItem> */}
+        <MenuItem onClick={handleClose}>
+        <ListItemIcon >
+            <Logout fontSize="small"  />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
+</div>
+</div>
+</div>
+     
+
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>

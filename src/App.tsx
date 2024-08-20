@@ -6,16 +6,20 @@ import Regester from './pages/regester'
 import Auth from './pages/auth'
 import Dashboard from './pages/dashboard'
 import Home from './pages/home'
-import { ToastContainer } from 'react-toastify';
+import {Toaster} from 'react-hot-toast'
 import 'react-toastify/dist/ReactToastify.css';
 function App() {
 
   return (
     <>
-    <ToastContainer/>
+
+  <Toaster
+  position="top-center"
+  reverseOrder={false}
+/>
     <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/regester" element={<Regester />} />
+      <Route path="/"  element={<Login />} />
+      <Route path="/register" element={<Regester />} />
       <Route path="/" element={<Auth />}>
       <Route path="dashboard" element={<Dashboard/>} />
       <Route path="home" element={<Home/>} />

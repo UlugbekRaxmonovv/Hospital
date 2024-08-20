@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react";
 import { PiEyeFill, PiEyeSlashFill } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { useFormInputValue } from "../../components/hook/useFormInputValue";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
 interface FormState {
@@ -22,28 +22,31 @@ const Login: React.FC = () => {
     // let isLogin = localStorage.getItem("x-auth-token")
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        let user={
+        const user={
             email: state.email,
             password: state.password
         }
-        console.log(user);
-        
+        console.log(user);  
         setState(initialState)
-        axios.post("http://3.68.219.212:3000/auth/login", user)
+        axios
+        .post(`https://tour.touristan-bs.uz/v1/users/login`, user)
         .then((response) => {
-          console.log(response);    
-          toast.success("Login successful");
+          console.log(response.data.access_token); 
+         
+          
+          localStorage.setItem("x-auth-token", response.data.access_token);
+          toast.success('Successfully toasted!')
           navigate("/dashboard");
         })
         .catch((error) => {
           console.error(error);
-          toast.error(error.response?.data?.message || "An error occurred");
+          toast.error("This didn't work.")
         });
       
     };
 
     return (
-        <div className="flex items-center justify-center flex-col h-[100vh]">
+        <div className="flex items-center justify-center flex-col h-[100vh] ">
             <div>
                 <form onSubmit={handleSubmit} className="w-[350px] py-[20px] shadow-lg px-[20px] rounded-lg">
                     <h1 className="text-[40px] text-center">Sign in</h1>

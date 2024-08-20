@@ -1,9 +1,8 @@
 import { Box } from "@mui/material";
 import MiniDrawer from "../../components/saidbar";
 import { Outlet } from "react-router-dom";
-
-
-const Dashboard: React.FC = () => {
+import DataTable from "../../components/datatable";
+const Dashboard: React.FC=() => {
 
     return (
        <>
@@ -12,7 +11,7 @@ const Dashboard: React.FC = () => {
         <MiniDrawer/>
         <Outlet />
              <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <h1>Admin panel</h1>
+                <DataTable/>
             </Box>
       
       </Box>

@@ -4,3 +4,27 @@
 .container{
     padding: 60px 0;
 }
+.w-full{
+    width: 106% !important;
+}
+.box{ 
+    width: 100%;
+    display: flex !important;
+    justify-content: space-between !important;
+}
+.box1{
+    display: flex !important;
+    justify-content: end !important;
+}
+.blur {
+    backdrop-filter: blur(2px);
+    transform: scale(1.3);
+    transition: backdrop-filter 1s, transform 1s;
+}
+
+.blur_none {
+    backdrop-filter: blur(0px);
+    transform: scale(1);
+    transition: backdrop-filter 1s, transform 1s;
+}
+
