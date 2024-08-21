@@ -26,5 +26,6 @@
     backdrop-filter: blur(0px);
     transform: scale(1);
     transition: backdrop-filter 1s, transform 1s;
+
 }
 
