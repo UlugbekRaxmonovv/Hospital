@@ -1,10 +1,10 @@
 import { FormEvent, useState } from "react";
-import { PiEyeFill, PiEyeSlashFill } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { useFormInputValue } from "../../components/hook/useFormInputValue";
 import { toast } from "react-hot-toast";
-import axios from "axios"
+import axios from "../../api"
 import { useNavigate } from "react-router-dom";
+import { PiEyeFill, PiEyeSlashFill } from "react-icons/pi";
 interface FormState {
     email: string;
     password: string;
@@ -29,7 +29,7 @@ const Login: React.FC = () => {
         console.log(user);  
         setState(initialState)
         axios
-        .post(`https://tour.touristan-bs.uz/v1/users/login`, user)
+        .post(`/auth/login`, user)
         .then((response) => {
           console.log(response.data.access_token); 
          
@@ -46,6 +46,7 @@ const Login: React.FC = () => {
     };
 
     return (
+     <>
         <div className="flex items-center justify-center flex-col h-[100vh] ">
             <div>
                 <form onSubmit={handleSubmit} className="w-[350px] py-[20px] shadow-lg px-[20px] rounded-lg">
@@ -74,7 +75,7 @@ const Login: React.FC = () => {
                         <br />
                         <div className="absolute right-2 top-[50%] -translate-y-[50%] cursor-pointer" onClick={() => setEye(prev => !prev)}>
                             {eye ? <PiEyeSlashFill /> : <PiEyeFill />}
-                        </div>
+                        </div> 
                     </div>
                     <button type="submit" className="w-full h-[40px] bg-blue-400 rounded-md text-white text-[20px]">
                         Submit
@@ -88,6 +89,7 @@ const Login: React.FC = () => {
                 </form>
             </div>
         </div>
+     </>
     );
 };
 
