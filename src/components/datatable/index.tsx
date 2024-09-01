@@ -8,24 +8,27 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import axios from "axios";
+import axios from "../../api";
 import { Modal, Button, Input } from "antd";
-import type { GetProps } from 'antd';
-import Edit from '../../components/edit';
+import type { GetProps } from "antd";
+import Edit from "../../components/edit";
 
 type SearchProps = GetProps<typeof Input.Search>;
 
 const { Search } = Input;
 
-const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
+const onSearch: SearchProps["onSearch"] = (value, _e, info) =>
+  console.log(info?.source, value);
 
 interface DataType {
   id: string;
-  title: string;
-  price: number;
-  url: string[];
-  category: string;
-  desc: string;
+  firstname: string;
+  email: string;
+  username: string;
+  password: string;
+  user_location: string;
+  date_of_birth: string;
+  lastname: string;
 }
 
 interface DenseTableProps {
@@ -34,31 +37,38 @@ interface DenseTableProps {
 }
 
 interface FormState {
-  title: string;
-  price: string;
-  url: string;
-  category: string;
-  desc: string;
+  date_of_birth: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  user_location: string;
+  username: string;
+  password: string;
 }
 
 const initialState: FormState = {
-  title: "",
-  price: "",
-  url: "",
-  category: "",
-  desc: "",
+  date_of_birth: "",
+  email: "",
+  firstname: "",
+  lastname: "",
+  user_location: "",
+  username: "",
+  password: "",
 };
 
 const DenseTable: React.FC<DenseTableProps> = ({ relout, setRelout }) => {
+  let isLogin = localStorage.getItem("x-auth-token");
   const [data, setData] = useState<DataType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [img, setImg] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<DataType | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
   const [state, setState] = useState<FormState>(initialState);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setState((prevState) => ({
       ...prevState,
@@ -69,18 +79,24 @@ const DenseTable: React.FC<DenseTableProps> = ({ relout, setRelout }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const product = {
-      title: state.title,
-      price: +state.price,
-      url: state.url.split("\n").filter((i) => i.trim()),
-      category: state.category,
-      desc: state.desc,
+      firstname: state.firstname,
+      lastname: state.lastname,
+      date_of_birth: state.date_of_birth,
+      email: state.email,
+      username: state.username,
+      password: state.password,
+      user_location: state.user_location,
     };
 
     try {
-      await axios.post("https://667fec3456c2c76b495a8d83.mockapi.io/cards", product);
+      await axios.post("/patients", product, {
+        headers: {
+          Authorization: `Bearer ${isLogin}`,
+        },
+      });
       setRelout((prev) => !prev);
       setIsModalOpenCreate(false);
-      setState(initialState); 
+      setState(initialState);
     } catch (error) {
       console.error("Error creating product:", error);
     }
@@ -92,9 +108,13 @@ const DenseTable: React.FC<DenseTableProps> = ({ relout, setRelout }) => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`https://667fec3456c2c76b495a8d83.mockapi.io/cards/${itemToDelete}`);
-      setData(data.filter(item => item.id !== itemToDelete));
-      setRelout(prev => !prev);
+      await axios.delete(`/patients/${itemToDelete}`, {
+        headers: {
+          Authorization: `Bearer ${isLogin}`,
+        },
+      });
+      setData((prevData) => prevData.filter((item) => item.id !== itemToDelete));
+      setRelout((prev) => !prev);
     } catch (error) {
       console.error("Error deleting data:", error);
     } finally {
@@ -106,19 +126,16 @@ const DenseTable: React.FC<DenseTableProps> = ({ relout, setRelout }) => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(import.meta.env.VITE_BASE_URL + "/cards")
+      .get("/patients?sortBy=id&order=asc&page=1&limit=10", {
+        headers: {
+          Authorization: `Bearer ${isLogin}`,
+        },
+      })
       .then((response) => {
         setData(response.data);
       })
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
-  }, [relout]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setImg(false);
-    }, 700);
-    return () => clearTimeout(timer);
   }, [relout]);
 
   const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
@@ -131,13 +148,12 @@ const DenseTable: React.FC<DenseTableProps> = ({ relout, setRelout }) => {
     setIsModalOpenCreate(false);
   };
 
-  const [value, setValue] =useState<string>("")
+  const [value, setValue] = useState<string>("");
   console.log(value);
-  
 
   return (
     <div className="w-full">
-      <Box sx={{ padding: '5px 0', display: 'flex', gap: '20px' }}>
+      <Box sx={{ padding: "5px 0", display: "flex", gap: "20px" }}>
         <Search
           placeholder="input search text"
           allowClear
@@ -145,24 +161,24 @@ const DenseTable: React.FC<DenseTableProps> = ({ relout, setRelout }) => {
           size="large"
           onSearch={onSearch}
           value={value}
-          onChange={(e) =>setValue(e.target.value)}
-          style={{ width: '90%' }}
+          onChange={(e) => setValue(e.target.value)}
+          style={{ width: "90%" }}
         />
-        <Button type="primary" onClick={showModal} style={{ padding: '19px' }}>
+        <Button type="primary" onClick={showModal} style={{ padding: "19px" }}>
           Create products
         </Button>
       </Box>
-      <Box sx={{ padding: '20px 0' }}>
+      <Box sx={{ padding: "20px 0" }}>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
                 <TableCell>№</TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell align="center">Price</TableCell>
-                <TableCell align="center">Category</TableCell>
-                <TableCell align="left">Description</TableCell>
-                <TableCell align="left">Images</TableCell>
+                <TableCell>First Name</TableCell>
+                <TableCell align="left">Last Name</TableCell>
+                <TableCell align="left">User Location</TableCell>
+                <TableCell align="left">Email</TableCell>
+                <TableCell align="left">Date of Birth</TableCell>
                 <TableCell align="left">Active</TableCell>
               </TableRow>
             </TableHead>
@@ -185,57 +201,45 @@ const DenseTable: React.FC<DenseTableProps> = ({ relout, setRelout }) => {
               </Box>
             )}
             <TableBody>
-              {data?.filter((user) =>
-                    user.title.toLowerCase().includes(value.toLowerCase()) 
-                  )
-                  ?.map((row, inx) => (
-                <TableRow
-                  key={inx}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {inx + 1}
-                  </TableCell>
-                  <TableCell>{row.title}</TableCell>
-                  <TableCell align="center">{row.price}</TableCell>
-                  <TableCell align="center">{row.category}</TableCell>
-                  <TableCell align="left">{row.desc}</TableCell>
-                  <TableCell align="left">
-                    <Box
-                      sx={{ width: "50px", height: "40px", overflow: "hidden" }}
-                    >
-                      <div className="w-full h-full">
-                        <img
-                          src={row.url[0]}
-                          className={`${
-                            !img ? "blur_none" : "blur"
-                          } w-[50px] h-[50px] object-contain cursor-pointer`}
-                          alt={row.title}
-                        />
+              {data
+                ?.filter((user) =>
+                  user.lastname.toLowerCase().includes(value.toLowerCase())
+                )
+                ?.map((row, inx) => (
+                  <TableRow
+                    key={inx}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {inx + 1}
+                    </TableCell>
+                    <TableCell>{row.firstname}</TableCell>
+                    <TableCell align="left">{row.lastname}</TableCell>
+                    <TableCell align="left">{row.user_location}</TableCell>
+                    <TableCell align="left">{row.email}</TableCell>
+                    <TableCell align="left">{row.date_of_birth}</TableCell>
+
+                    <TableCell align="left">
+                      <div className="flex space-x-2">
+                        <button
+                          className="bg-slate-700 text-white px-2 py-1 rounded"
+                          onClick={() => handleEditSubmit(row)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="bg-red-600 text-white px-2 py-1 rounded"
+                          onClick={() => {
+                            setItemToDelete(row.id);
+                            setDeleteModalOpen(true);
+                          }}
+                        >
+                          Delete
+                        </button>
                       </div>
-                    </Box>
-                  </TableCell>
-                  <TableCell align="left">
-                    <div className="flex space-x-2">
-                      <button
-                        className="bg-slate-700 text-white px-2 py-1 rounded"
-                        onClick={() => handleEditSubmit(row)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="bg-red-600 text-white px-2 py-1 rounded"
-                        onClick={() => {
-                          setItemToDelete(row.id);
-                          setDeleteModalOpen(true);
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -277,43 +281,56 @@ const DenseTable: React.FC<DenseTableProps> = ({ relout, setRelout }) => {
       >
         <form onSubmit={handleSubmit}>
           <Input
-            placeholder="Title"
-            name="title"
+            placeholder="First Name"
+            name="firstname"
             className="mb-5"
             onChange={handleChange}
-            value={state.title}
+            value={state.firstname}
           />
           <Input
-            placeholder="Price"
-            type="number"
-            name="price"
+            placeholder="Last Name"
+            name="lastname"
             className="mb-5"
             onChange={handleChange}
-            value={state.price}
+            value={state.lastname}
           />
           <Input
-            placeholder="Description "
-            name="desc"
+            placeholder="Date of Birth"
+            name="date_of_birth"
             className="mb-5"
             onChange={handleChange}
-            value={state.desc}
+            value={state.date_of_birth}
           />
           <Input
-            placeholder="Category"
-            name="category"
+            placeholder="User Location"
+            name="user_location"
             className="mb-5"
             onChange={handleChange}
-            value={state.category}
+            value={state.user_location}
           />
-          <Input.TextArea
-            placeholder="Image URLs (new line separated)"
-            name="url"
+          <Input
+            placeholder="Email"
+            name="email"
             className="mb-5"
             onChange={handleChange}
-            value={state.url}
+            value={state.email}
           />
-          <Button htmlType="submit" type="primary">
-            Create
+          <Input
+            placeholder="Username"
+            name="username"
+            className="mb-5"
+            onChange={handleChange}
+            value={state.username}
+          />
+          <Input.Password
+            placeholder="Password"
+            name="password"
+            className="mb-5"
+            onChange={handleChange}
+            value={state.password}
+          />
+          <Button type="primary" htmlType="submit" block>
+            Submit
           </Button>
         </form>
       </Modal>

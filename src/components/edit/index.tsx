@@ -3,12 +3,15 @@ import axios from "axios";
 
 interface DataType {
   id: string;
-  title: string;
-  price: number;  // O'zgartirildi: `string`dan `number`ga
-  url: string[];
-  category: string;
-  desc: string;
+  firstname: string;
+  lastname:string;
+  date_of_birth:string;
+  email: string;
+  username: string;
+  password: string;
+  user_location:string;
 }
+
 
 interface EditProps {
   isModalOpen: DataType;
@@ -52,21 +55,21 @@ const Edit: React.FC<EditProps> = ({ isModalOpen, setIsModalOpen, setRelout }) =
           <form onSubmit={handleFormSubmit}>
             <input
               name="category"
-              value={isModalOpen.category}
+              value={isModalOpen.firstname}
               onChange={handleInputChange}
               type="text"
               className="border w-full h-[40px] rounded px-[10px] mb-4 outline-none"
             /> <br />
             <input
               name="desc"
-              value={isModalOpen.desc}
+              value={isModalOpen.lastname}
               onChange={handleInputChange}
               type="text"
               className="border w-full h-[40px] rounded px-[10px] mb-4 outline-none"
             /> <br />
             <input
               name="price"
-              value={isModalOpen.price}
+              value={isModalOpen.date_of_birth}
               onChange={handleInputChange}
               type="number"  
               className="border w-full h-[40px] rounded px-[10px] mb-4 outline-none"

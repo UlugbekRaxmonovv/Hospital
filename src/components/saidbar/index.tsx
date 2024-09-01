@@ -244,7 +244,7 @@ export default function MiniDrawer() {
                 >
                   <FaHospitalSymbol  style={{fontSize:'30px'}}/>
                 </ListItemIcon>
-                <ListItemText primary="Hospital" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary="Patients" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
 
