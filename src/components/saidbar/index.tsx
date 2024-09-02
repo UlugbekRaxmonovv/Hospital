@@ -16,7 +16,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import {MdOutlineHome } from "react-icons/md";
+// import {MdOutlineHome } from "react-icons/md";
 import { FaHospitalSymbol } from "react-icons/fa";
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -263,9 +263,9 @@ export default function MiniDrawer() {
                     justifyContent: 'center',
                   }}
                 >
-                  <MdOutlineHome  style={{fontSize:'30px'}}/>
+                  <FaHospitalSymbol  style={{fontSize:'30px'}}/>
                 </ListItemIcon>
-                <ListItemText primary="Home" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary=" Hospital" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
         </List>

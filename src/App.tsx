@@ -20,7 +20,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Auth />}>
           <Route path="dashboard" element={<Dashboard setRelout={setRelout} relout={relout} />} />
-          <Route path="home" element={<Home />} />
+          <Route path="home" element={<Home setRelout={setRelout} relout={relout} />} />
         </Route>
       </Routes>
     </>
